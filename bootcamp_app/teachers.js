@@ -11,14 +11,16 @@ const pool = new Pool({
 
 console.log("connected");
 pool.query(`
-SELECT students.id as student_id, students.name as name, cohorts.name as cohort
-FROM students
+SELECT DISTINCT teachers.name as teacher, cohorts.name as cohort
+FROM assistance_requests
+JOIN teachers ON teachers.id = teacher_id
+JOIN students ON students.id = student_id
 JOIN cohorts ON cohorts.id = cohort_id
-WHERE cohorts.name LIKE '${args[0]}%'
-LIMIT ${args[1] || 5};
+WHERE cohorts.name = '${args[0] ||'JUL02'}'
+ORDER BY teacher;
 `)
 .then(res => {
-  res.rows.forEach(user => {
-    console.log(`${user.name} has an id of ${user.student_id} and was in the ${user.cohort} cohort`);
+  res.rows.forEach(row => {
+    console.log(`${row.cohort}: ${row.teacher}`);
   })
 });
